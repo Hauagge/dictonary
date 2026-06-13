@@ -1,0 +1,34 @@
+# Dependências
+node_modules/
+
+# Variáveis de ambiente
+.env
+.env.local
+.env.*.local
+
+# Builds
+dist/
+build/
+.next/
+out/
+
+# Testes / cobertura
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Lockfile solto na raiz (cada projeto tem o seu)
+/yarn.lock
+
+# Pastas legadas mantidas apenas como referência local
+backend.example/
+frontend.example/
+
+# Sistema / editores
+.DS_Store
+.idea/
+.vscode/

@@ -5,9 +5,16 @@ import { FavoritesService } from "./favorites.service"
 
 export const FAVORITES_QUEUE = "favorites"
 
+const FOREIGN_KEY_VIOLATION = "23503"
+
 interface FavoriteJob {
   userId: string
   word: string
+}
+
+export function isForeignKeyViolation(error: unknown): boolean {
+  const candidate = error as { code?: string; driverError?: { code?: string } }
+  return candidate?.code === FOREIGN_KEY_VIOLATION || candidate?.driverError?.code === FOREIGN_KEY_VIOLATION
 }
 
 @Injectable()
@@ -35,7 +42,7 @@ export class FavoritesQueueService implements OnModuleInit, OnModuleDestroy {
     })
     this.worker = new Worker<FavoriteJob>(
       FAVORITES_QUEUE,
-      (job: Job<FavoriteJob>) => this.favorites.add(job.data.userId, job.data.word),
+      (job: Job<FavoriteJob>) => this.process(job),
       { connection: { ...base, maxRetriesPerRequest: null } },
     )
     this.worker.on("failed", (job, error) => {
@@ -56,6 +63,18 @@ export class FavoritesQueueService implements OnModuleInit, OnModuleDestroy {
       )
     } catch {
       await this.favorites.add(userId, word)
+    }
+  }
+
+  private async process(job: Job<FavoriteJob>): Promise<void> {
+    try {
+      await this.favorites.add(job.data.userId, job.data.word)
+    } catch (error) {
+      if (isForeignKeyViolation(error)) {
+        this.logger.warn(`Favorito ignorado: usuario ${job.data.userId} nao existe mais`)
+        return
+      }
+      throw error
     }
   }
 

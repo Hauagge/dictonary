@@ -7,7 +7,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm"
-import { User } from "../../users/entities/user.entity"
+import { UserEntity } from "../../users/entities/user.entity"
 
 @Entity("history")
 @Index(["userId", "createdAt"])
@@ -21,9 +21,9 @@ export class HistoryEntity {
   @Column()
   userId: string
 
-  @ManyToOne(() => User, { onDelete: "CASCADE" })
+  @ManyToOne(() => UserEntity, { onDelete: "CASCADE" })
   @JoinColumn({ name: "userId" })
-  user: User
+  user: UserEntity
 
   @CreateDateColumn()
   createdAt: Date

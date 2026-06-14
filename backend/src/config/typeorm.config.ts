@@ -1,8 +1,8 @@
 import { TypeOrmModuleOptions } from "@nestjs/typeorm"
-import { Favorite } from "../favorites/entities/favorite.entity"
-import { History } from "../history/entities/history.entity"
-import { Word } from "../entries/entities/word.entity"
-import { User } from "../users/entities/user.entity"
+import { FavoriteEntity } from "../favorites/entities/favorite.entity"
+import { HistoryEntity } from "../history/entities/history.entity"
+import { WordEntity } from "../entries/entities/word.entity"
+import { UserEntity } from "../users/entities/user.entity"
 
 export function buildTypeOrmOptions(): TypeOrmModuleOptions {
   const synchronize =
@@ -10,7 +10,7 @@ export function buildTypeOrmOptions(): TypeOrmModuleOptions {
       ? process.env.DB_SYNCHRONIZE === "true"
       : process.env.NODE_ENV !== "production"
 
-  const entities = [User, Word, History, Favorite]
+  const entities = [UserEntity, WordEntity, HistoryEntity, FavoriteEntity]
 
   if (process.env.DATABASE_URL) {
     return {

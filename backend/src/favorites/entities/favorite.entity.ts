@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from "typeorm"
-import { User } from "../../users/entities/user.entity"
+import { UserEntity } from "../../users/entities/user.entity"
 
 @Entity("favorites")
 @Unique(["userId", "word"])
@@ -21,9 +21,9 @@ export class FavoriteEntity {
   @Column()
   userId: string
 
-  @ManyToOne(() => User, { onDelete: "CASCADE" })
+  @ManyToOne(() => UserEntity, { onDelete: "CASCADE" })
   @JoinColumn({ name: "userId" })
-  user: User
+  user: UserEntity
 
   @CreateDateColumn()
   createdAt: Date

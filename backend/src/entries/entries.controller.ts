@@ -6,8 +6,10 @@ import {
   Param,
   Post,
   Query,
+  Res,
   UseGuards,
 } from "@nestjs/common"
+import { Response } from "express"
 import { CurrentUser } from "../auth/decorators/current-user.decorator"
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard"
 import { WordParamPipe } from "../common/pipes/word-param.pipe"
@@ -34,9 +36,14 @@ export class EntriesController {
 
   @UseGuards(JwtAuthGuard)
   @Get("en/:word")
-  async detail(@Param("word", WordParamPipe) word: string, @CurrentUser() user: UserEntity) {
-    const data = await this.dictionary.fetch(word)
+  async detail(
+    @Param("word", WordParamPipe) word: string,
+    @CurrentUser() user: UserEntity,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { data, cached } = await this.dictionary.fetch(word)
     await this.history.add(user.id, word)
+    res.setHeader("x-cache", cached ? "HIT" : "MISS")
     return data
   }
 

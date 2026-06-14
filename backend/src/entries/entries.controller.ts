@@ -9,6 +9,7 @@ import {
   Res,
   UseGuards,
 } from "@nestjs/common"
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger"
 import { Response } from "express"
 import { CurrentUser } from "../auth/decorators/current-user.decorator"
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard"
@@ -20,6 +21,7 @@ import { UserEntity } from "../users/entities/user.entity"
 import { EntriesQueryDto } from "./dto/entries-query.dto"
 import { EntriesService } from "./entries.service"
 
+@ApiTags("Entries")
 @Controller("entries")
 export class EntriesController {
   constructor(
@@ -34,6 +36,7 @@ export class EntriesController {
     return this.entries.list(query)
   }
 
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get("en/:word")
   async detail(
@@ -47,6 +50,7 @@ export class EntriesController {
     return data
   }
 
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
   @Post("en/:word/favorite")
@@ -54,6 +58,7 @@ export class EntriesController {
     await this.favorites.add(user.id, word)
   }
 
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
   @Delete("en/:word/unfavorite")

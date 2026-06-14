@@ -8,9 +8,7 @@ export default function AppHeader() {
         <Link className="brand" href="/">
           📖 English Dictionary
         </Link>
-        <Link className="nav-link" href="/">
-          Buscar
-        </Link>
+
         <Link className="nav-link" href="/favorites">
           Favoritos
         </Link>

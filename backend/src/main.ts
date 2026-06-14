@@ -1,21 +1,15 @@
-import { ValidationPipe } from "@nestjs/common"
 import { NestFactory } from "@nestjs/core"
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger"
+import { patchNestJsSwagger } from "nestjs-zod"
 import { AppModule } from "./app.module"
 import { HttpExceptionFilter } from "./common/filters/http-exception.filter"
+
+patchNestJsSwagger()
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule)
 
   app.enableCors()
-
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      transform: true,
-      transformOptions: { enableImplicitConversion: true },
-    }),
-  )
 
   app.useGlobalFilters(new HttpExceptionFilter())
 

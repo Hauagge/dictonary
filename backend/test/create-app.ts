@@ -1,4 +1,4 @@
-import { INestApplication, NotFoundException, ValidationPipe } from "@nestjs/common"
+import { INestApplication, NotFoundException } from "@nestjs/common"
 import { Test } from "@nestjs/testing"
 import { DataSource } from "typeorm"
 import { AppModule } from "../src/app.module"
@@ -30,13 +30,6 @@ export async function createTestApp(): Promise<INestApplication> {
 
   const app = moduleRef.createNestApplication()
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      transform: true,
-      transformOptions: { enableImplicitConversion: true },
-    }),
-  )
   app.useGlobalFilters(new HttpExceptionFilter())
 
   await app.init()

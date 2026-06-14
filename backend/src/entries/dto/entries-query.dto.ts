@@ -1,21 +1,10 @@
-import { Type } from "class-transformer"
-import { IsInt, IsOptional, IsString, Max, Min } from "class-validator"
+import { createZodDto } from "nestjs-zod"
+import { z } from "zod"
 
-export class EntriesQueryDto {
-  @IsOptional()
-  @IsString()
-  search?: string
+export const entriesQuerySchema = z.object({
+  search: z.string().optional(),
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(10),
+})
 
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  page: number = 1
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  @Max(100)
-  limit: number = 10
-}
+export class EntriesQueryDto extends createZodDto(entriesQuerySchema) {}

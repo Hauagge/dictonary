@@ -9,11 +9,12 @@ import {
   Res,
   UseGuards,
 } from "@nestjs/common"
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger"
+import { ApiBearerAuth, ApiQuery, ApiTags } from "@nestjs/swagger"
+import { ZodValidationPipe } from "nestjs-zod"
 import { Response } from "express"
 import { CurrentUser } from "../auth/decorators/current-user.decorator"
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard"
-import { WordParamPipe } from "../common/pipes/word-param.pipe"
+import { wordParamSchema } from "../common/schemas/word-param.schema"
 import { DictionaryService } from "../dictionary/dictionary.service"
 import { FavoritesQueueService } from "../favorites/favorites-queue.service"
 import { FavoritesService } from "../favorites/favorites.service"
@@ -34,7 +35,10 @@ export class EntriesController {
   ) {}
 
   @Get("en")
-  list(@Query() query: EntriesQueryDto) {
+  @ApiQuery({ name: "search", required: false, type: String })
+  @ApiQuery({ name: "page", required: false, type: Number, example: 1 })
+  @ApiQuery({ name: "limit", required: false, type: Number, example: 10 })
+  list(@Query(new ZodValidationPipe(EntriesQueryDto)) query: EntriesQueryDto) {
     return this.entries.list(query)
   }
 
@@ -42,7 +46,7 @@ export class EntriesController {
   @UseGuards(JwtAuthGuard)
   @Get("en/:word")
   async detail(
-    @Param("word", WordParamPipe) word: string,
+    @Param("word", new ZodValidationPipe(wordParamSchema)) word: string,
     @CurrentUser() user: UserEntity,
     @Res({ passthrough: true }) res: Response,
   ) {
@@ -56,7 +60,7 @@ export class EntriesController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
   @Post("en/:word/favorite")
-  async favorite(@Param("word", WordParamPipe) word: string, @CurrentUser() user: UserEntity) {
+  async favorite(@Param("word", new ZodValidationPipe(wordParamSchema)) word: string, @CurrentUser() user: UserEntity) {
     await this.favoritesQueue.enqueueAdd(user.id, word)
   }
 
@@ -64,7 +68,7 @@ export class EntriesController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
   @Delete("en/:word/unfavorite")
-  async unfavorite(@Param("word", WordParamPipe) word: string, @CurrentUser() user: UserEntity) {
+  async unfavorite(@Param("word", new ZodValidationPipe(wordParamSchema)) word: string, @CurrentUser() user: UserEntity) {
     await this.favorites.remove(user.id, word)
   }
 }

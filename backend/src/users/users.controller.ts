@@ -1,5 +1,6 @@
 import { Controller, Get, Query, UseGuards } from "@nestjs/common"
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger"
+import { ApiBearerAuth, ApiQuery, ApiTags } from "@nestjs/swagger"
+import { ZodValidationPipe } from "nestjs-zod"
 import { CurrentUser } from "../auth/decorators/current-user.decorator"
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard"
 import { PaginationQueryDto } from "../common/dto/pagination-query.dto"
@@ -23,12 +24,16 @@ export class UsersController {
   }
 
   @Get("me/history")
-  getHistory(@CurrentUser() user: UserEntity, @Query() query: PaginationQueryDto) {
+  @ApiQuery({ name: "page", required: false, type: Number, example: 1 })
+  @ApiQuery({ name: "limit", required: false, type: Number, example: 10 })
+  getHistory(@CurrentUser() user: UserEntity, @Query(new ZodValidationPipe(PaginationQueryDto)) query: PaginationQueryDto) {
     return this.history.list(user.id, query)
   }
 
   @Get("me/favorites")
-  getFavorites(@CurrentUser() user: UserEntity, @Query() query: PaginationQueryDto) {
+  @ApiQuery({ name: "page", required: false, type: Number, example: 1 })
+  @ApiQuery({ name: "limit", required: false, type: Number, example: 10 })
+  getFavorites(@CurrentUser() user: UserEntity, @Query(new ZodValidationPipe(PaginationQueryDto)) query: PaginationQueryDto) {
     return this.favorites.list(user.id, query)
   }
 }

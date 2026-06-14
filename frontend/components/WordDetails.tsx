@@ -3,24 +3,9 @@
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { apiFetch } from "@/lib/api"
+import { getAudio, getPhonetic } from "@/lib/dictionary"
 import type { DictionaryEntry, FavoriteItem, Paginated } from "@/lib/types"
-
-function getPhonetic(entries: DictionaryEntry[]): string {
-  for (const entry of entries) {
-    if (entry.phonetic) return entry.phonetic
-    const text = entry.phonetics?.find((item) => item.text)?.text
-    if (text) return text
-  }
-  return ""
-}
-
-function getAudio(entries: DictionaryEntry[]): string | null {
-  for (const entry of entries) {
-    const audio = entry.phonetics?.find((item) => item.audio)?.audio
-    if (audio) return audio
-  }
-  return null
-}
+import WordMeanings from "./WordMeanings"
 
 export default function WordDetails({ word }: { word: string }) {
   const [entries, setEntries] = useState<DictionaryEntry[] | null>(null)
@@ -96,21 +81,7 @@ export default function WordDetails({ word }: { word: string }) {
               </div>
             </div>
 
-            {entries.map((entry, entryIndex) =>
-              entry.meanings?.map((meaning, meaningIndex) => (
-                <div key={`${entryIndex}-${meaningIndex}`} className="card meaning">
-                  <h3 className="meaning-pos">{meaning.partOfSpeech}</h3>
-                  <ol className="meaning-list">
-                    {meaning.definitions?.map((definition, defIndex) => (
-                      <li key={defIndex}>
-                        <p>{definition.definition}</p>
-                        {definition.example && <p className="muted">“{definition.example}”</p>}
-                      </li>
-                    ))}
-                  </ol>
-                </div>
-              )),
-            )}
+            <WordMeanings entries={entries} />
           </>
         )}
       </section>

@@ -15,6 +15,7 @@ import { CurrentUser } from "../auth/decorators/current-user.decorator"
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard"
 import { WordParamPipe } from "../common/pipes/word-param.pipe"
 import { DictionaryService } from "../dictionary/dictionary.service"
+import { FavoritesQueueService } from "../favorites/favorites-queue.service"
 import { FavoritesService } from "../favorites/favorites.service"
 import { HistoryService } from "../history/history.service"
 import { UserEntity } from "../users/entities/user.entity"
@@ -29,6 +30,7 @@ export class EntriesController {
     private readonly dictionary: DictionaryService,
     private readonly history: HistoryService,
     private readonly favorites: FavoritesService,
+    private readonly favoritesQueue: FavoritesQueueService,
   ) {}
 
   @Get("en")
@@ -55,7 +57,7 @@ export class EntriesController {
   @HttpCode(204)
   @Post("en/:word/favorite")
   async favorite(@Param("word", WordParamPipe) word: string, @CurrentUser() user: UserEntity) {
-    await this.favorites.add(user.id, word)
+    await this.favoritesQueue.enqueueAdd(user.id, word)
   }
 
   @ApiBearerAuth()

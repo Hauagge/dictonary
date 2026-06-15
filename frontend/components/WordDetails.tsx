@@ -56,18 +56,18 @@ export default function WordDetails({ word }: { word: string }) {
         </Link>
       </header>
 
-      <section className="py-10">
+      <section className="py-8 sm:py-10">
         {loading && <p className="text-muted">Carregando...</p>}
         {error && !loading && <p className="text-danger text-[0.9rem] m-0">{error}</p>}
 
         {entries && !loading && (
           <>
-            <div className="flex items-start justify-between gap-4 mb-5">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-5">
               <div>
                 <h1 className="m-0 capitalize">{word}</h1>
                 {phonetic && <span className="text-muted">{phonetic}</span>}
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {audio && (
                   <button
                     className={GHOST_BTN}

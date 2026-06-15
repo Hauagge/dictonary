@@ -12,8 +12,9 @@ export function buildTypeOrmOptions(): TypeOrmModuleOptions {
       : process.env.NODE_ENV !== "production"
 
   const entities = [UserEntity, WordEntity, HistoryEntity, FavoriteEntity]
-  // Resolve em .ts (ts-node/CLI) e em .js (dist em producao).
   const migrations = [join(__dirname, "..", "migrations", "*{.ts,.js}")]
+  const ssl =
+    process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : undefined
 
   if (process.env.DATABASE_URL) {
     return {
@@ -22,6 +23,7 @@ export function buildTypeOrmOptions(): TypeOrmModuleOptions {
       entities,
       migrations,
       synchronize,
+      ssl,
     }
   }
 
@@ -35,5 +37,6 @@ export function buildTypeOrmOptions(): TypeOrmModuleOptions {
     entities,
     migrations,
     synchronize,
+    ssl,
   }
 }

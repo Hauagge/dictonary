@@ -3,16 +3,16 @@ import LogoutButton from "./LogoutButton"
 
 export default function AppHeader() {
   return (
-    <header className="topbar">
-      <nav className="nav">
-        <Link className="brand" href="/">
+    <header className="flex items-center justify-between py-[18px] border-b border-border">
+      <nav className="flex items-center gap-[18px]">
+        <Link className="font-bold text-[1.15rem]" href="/">
           📖 English Dictionary
         </Link>
 
-        <Link className="nav-link" href="/favorites">
+        <Link className="text-muted font-medium hover:text-primary" href="/favorites">
           Favoritos
         </Link>
-        <Link className="nav-link" href="/dictionary">
+        <Link className="text-muted font-medium hover:text-primary" href="/dictionary">
           Dicionário
         </Link>
       </nav>

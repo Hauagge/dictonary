@@ -49,7 +49,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <form
-        className="bg-surface border border-border rounded-xl p-7 w-full max-w-[360px] flex flex-col gap-[14px]"
+        className="bg-surface border border-border rounded-xl p-6 sm:p-7 w-full max-w-[360px] flex flex-col gap-[14px]"
         onSubmit={handleSubmit}
       >
         <h1 className="m-0 mb-1.5 text-center">{isSignup ? "Criar conta" : "Entrar"}</h1>

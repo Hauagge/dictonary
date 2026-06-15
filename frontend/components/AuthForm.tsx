@@ -47,13 +47,16 @@ export default function AuthForm({ mode }: AuthFormProps) {
   }
 
   return (
-    <div className="auth">
-      <form className="card auth__form" onSubmit={handleSubmit}>
-        <h1>{isSignup ? "Criar conta" : "Entrar"}</h1>
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <form
+        className="bg-surface border border-border rounded-xl p-7 w-full max-w-[360px] flex flex-col gap-[14px]"
+        onSubmit={handleSubmit}
+      >
+        <h1 className="m-0 mb-1.5 text-center">{isSignup ? "Criar conta" : "Entrar"}</h1>
 
         {isSignup && (
           <input
-            className="input"
+            className="w-full px-3.5 py-3 border border-border rounded-[10px] bg-bg text-text text-base focus:outline-2 focus:outline-primary"
             placeholder="Nome"
             value={name}
             onChange={(event) => setName(event.target.value)}
@@ -62,7 +65,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
         )}
 
         <input
-          className="input"
+          className="w-full px-3.5 py-3 border border-border rounded-[10px] bg-bg text-text text-base focus:outline-2 focus:outline-primary"
           type="email"
           placeholder="E-mail"
           value={email}
@@ -71,7 +74,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
         />
 
         <input
-          className="input"
+          className="w-full px-3.5 py-3 border border-border rounded-[10px] bg-bg text-text text-base focus:outline-2 focus:outline-primary"
           type="password"
           placeholder="Senha"
           value={password}
@@ -79,13 +82,17 @@ export default function AuthForm({ mode }: AuthFormProps) {
           required
         />
 
-        {error && <p className="error">{error}</p>}
+        {error && <p className="text-danger text-[0.9rem] m-0">{error}</p>}
 
-        <button className="btn" type="submit" disabled={loading}>
+        <button
+          className="w-full px-4 py-3 rounded-[10px] bg-primary text-white text-base font-semibold cursor-pointer enabled:hover:bg-primary-hover disabled:opacity-60 disabled:cursor-not-allowed"
+          type="submit"
+          disabled={loading}
+        >
           {loading ? "Aguarde..." : isSignup ? "Cadastrar" : "Entrar"}
         </button>
 
-        <p className="auth__switch">
+        <p className="text-center text-[0.9rem] text-muted m-0">
           {isSignup ? (
             <>
               Já tem conta? <Link href="/login">Entrar</Link>

@@ -6,6 +6,8 @@ import { HistoryModule } from "../history/history.module"
 import { EntriesController } from "./entries.controller"
 import { EntriesService } from "./entries.service"
 import { WordEntity } from "./entities/word.entity"
+import { EntriesRepository } from "./repositories/entries.repository"
+import { TypeOrmEntriesRepository } from "./repositories/typeorm-entries.repository"
 
 @Module({
   imports: [
@@ -15,6 +17,9 @@ import { WordEntity } from "./entities/word.entity"
     FavoritesModule,
   ],
   controllers: [EntriesController],
-  providers: [EntriesService],
+  providers: [
+    EntriesService,
+    { provide: EntriesRepository, useClass: TypeOrmEntriesRepository },
+  ],
 })
 export class EntriesModule {}

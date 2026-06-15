@@ -4,12 +4,12 @@ import SearchBox from "@/components/SearchBox"
 
 export default function HomePage() {
   return (
-    <main className="shell">
+    <main className="max-w-[820px] mx-auto px-4 pb-12">
       <AppHeader />
-      <section className="content">
+      <section className="py-10">
         <h1>Buscar palavra</h1>
         <SearchBox />
-        <h2 className="section-title">Histórico de pesquisas</h2>
+        <h2 className="mt-9 text-[1.1rem] text-muted">Histórico de pesquisas</h2>
         <HistoryList />
       </section>
     </main>

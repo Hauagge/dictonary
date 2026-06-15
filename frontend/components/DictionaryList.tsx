@@ -76,7 +76,7 @@ export default function DictionaryList() {
           )}
 
           {data.totalPages > 1 && (
-            <div className="flex items-center justify-center gap-4 mt-6">
+            <div className="flex flex-wrap items-center justify-center gap-4 mt-6">
               <button
                 className={GHOST_BTN}
                 disabled={!data.hasPrev}

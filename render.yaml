@@ -20,7 +20,9 @@ services:
     runtime: node
     plan: free
     rootDir: backend
-    buildCommand: yarn install --frozen-lockfile && yarn build
+    # --production=false: instala devDependencies (nest/typescript) mesmo com
+    # NODE_ENV=production, necessarias para o "nest build". O runtime usa so o dist.
+    buildCommand: yarn install --frozen-lockfile --production=false && yarn build
     startCommand: yarn migration:run:prod && yarn start:prod
     healthCheckPath: /docs
     autoDeploy: true

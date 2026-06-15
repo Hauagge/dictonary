@@ -6,6 +6,9 @@ import { getAudio, getPhonetic } from "@/lib/dictionary"
 import type { DictionaryEntry, FavoriteItem, Paginated } from "@/lib/types"
 import WordMeanings from "./WordMeanings"
 
+const GHOST_BTN =
+  "w-auto px-3.5 py-2 rounded-[10px] border border-border bg-transparent text-text text-base font-semibold cursor-pointer enabled:hover:bg-primary-hover disabled:opacity-60 disabled:cursor-not-allowed"
+
 export default function WordModal({ word, onClose }: { word: string; onClose: () => void }) {
   const [entries, setEntries] = useState<DictionaryEntry[] | null>(null)
   const [loading, setLoading] = useState(true)
@@ -53,17 +56,25 @@ export default function WordModal({ word, onClose }: { word: string; onClose: ()
   const audio = entries ? getAudio(entries) : null
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal" role="dialog" aria-modal="true" onClick={(event) => event.stopPropagation()}>
-        <div className="modal-head">
+    <div
+      className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50"
+      onClick={onClose}
+    >
+      <div
+        className="bg-surface border border-border rounded-[14px] w-full max-w-[600px] max-h-[85vh] flex flex-col overflow-hidden"
+        role="dialog"
+        aria-modal="true"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-3 px-5 py-[18px] border-b border-border">
           <div>
-            <h2 className="word-title">{word}</h2>
-            {phonetic && <span className="muted">{phonetic}</span>}
+            <h2 className="m-0 capitalize">{word}</h2>
+            {phonetic && <span className="text-muted">{phonetic}</span>}
           </div>
-          <div className="word-actions">
+          <div className="flex gap-2">
             {audio && (
               <button
-                className="btn btn--ghost"
+                className={GHOST_BTN}
                 onClick={() => {
                   void new Audio(audio).play().catch(() => {})
                 }}
@@ -71,17 +82,17 @@ export default function WordModal({ word, onClose }: { word: string; onClose: ()
                 🔊
               </button>
             )}
-            <button className="btn btn--ghost" onClick={toggleFavorite}>
+            <button className={GHOST_BTN} onClick={toggleFavorite}>
               {favorite ? "❤️" : "🤍"}
             </button>
-            <button className="btn btn--ghost" onClick={onClose} aria-label="Fechar">
+            <button className={GHOST_BTN} onClick={onClose} aria-label="Fechar">
               ✕
             </button>
           </div>
         </div>
-        <div className="modal-body">
-          {loading && <p className="muted">Carregando...</p>}
-          {error && !loading && <p className="error">{error}</p>}
+        <div className="p-5 overflow-y-auto">
+          {loading && <p className="text-muted">Carregando...</p>}
+          {error && !loading && <p className="text-danger text-[0.9rem] m-0">{error}</p>}
           {entries && !loading && <WordMeanings entries={entries} />}
         </div>
       </div>

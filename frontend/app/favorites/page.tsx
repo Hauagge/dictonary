@@ -3,9 +3,9 @@ import FavoritesList from "@/components/FavoritesList"
 
 export default function FavoritesPage() {
   return (
-    <main className="shell">
+    <main className="max-w-[820px] mx-auto px-4 pb-12">
       <AppHeader />
-      <section className="content">
+      <section className="py-10">
         <h1>Favoritos</h1>
         <FavoritesList />
       </section>

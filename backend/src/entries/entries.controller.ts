@@ -17,7 +17,6 @@ import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard"
 import { wordParamSchema } from "../common/schemas/word-param.schema"
 import { DictionaryService } from "../dictionary/dictionary.service"
 import { FavoritesQueueService } from "../favorites/favorites-queue.service"
-import { FavoritesService } from "../favorites/favorites.service"
 import { HistoryService } from "../history/history.service"
 import { UserEntity } from "../users/entities/user.entity"
 import { EntriesQueryDto } from "./dto/entries-query.dto"
@@ -30,7 +29,6 @@ export class EntriesController {
     private readonly entries: EntriesService,
     private readonly dictionary: DictionaryService,
     private readonly history: HistoryService,
-    private readonly favorites: FavoritesService,
     private readonly favoritesQueue: FavoritesQueueService,
   ) {}
 
@@ -69,6 +67,6 @@ export class EntriesController {
   @HttpCode(204)
   @Delete("en/:word/unfavorite")
   async unfavorite(@Param("word", new ZodValidationPipe(wordParamSchema)) word: string, @CurrentUser() user: UserEntity) {
-    await this.favorites.remove(user.id, word)
+    await this.favoritesQueue.enqueueRemove(user.id, word)
   }
 }

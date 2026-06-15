@@ -7,7 +7,10 @@ export const FAVORITES_QUEUE = "favorites"
 
 const FOREIGN_KEY_VIOLATION = "23503"
 
+type FavoriteAction = "add" | "remove"
+
 interface FavoriteJob {
+  action: FavoriteAction
   userId: string
   word: string
 }
@@ -40,42 +43,59 @@ export class FavoritesQueueService implements OnModuleInit, OnModuleDestroy {
     this.queue = new Queue(FAVORITES_QUEUE, {
       connection: { ...base, maxRetriesPerRequest: 1, enableOfflineQueue: false },
     })
+    // concurrency 1 garante ordem FIFO: o add e o remove da mesma palavra
+    // sao processados na ordem em que foram enfileirados (sem race de toggle).
     this.worker = new Worker<FavoriteJob>(
       FAVORITES_QUEUE,
       (job: Job<FavoriteJob>) => this.process(job),
-      { connection: { ...base, maxRetriesPerRequest: null } },
+      { connection: { ...base, maxRetriesPerRequest: null }, concurrency: 1 },
     )
     this.worker.on("failed", (job, error) => {
       this.logger.error(`Falha ao persistir favorito ${job?.id}: ${error.message}`)
     })
   }
 
-  async enqueueAdd(userId: string, word: string): Promise<void> {
+  enqueueAdd(userId: string, word: string): Promise<void> {
+    return this.enqueue("add", userId, word)
+  }
+
+  enqueueRemove(userId: string, word: string): Promise<void> {
+    return this.enqueue("remove", userId, word)
+  }
+
+  private async enqueue(action: FavoriteAction, userId: string, word: string): Promise<void> {
     if (!this.queue) {
-      await this.favorites.add(userId, word)
+      await this.run(action, userId, word)
       return
     }
     try {
       await this.queue.add(
-        "add",
-        { userId, word },
+        action,
+        { action, userId, word },
         { attempts: 3, backoff: { type: "exponential", delay: 1000 }, removeOnComplete: true, removeOnFail: 100 },
       )
     } catch {
-      await this.favorites.add(userId, word)
+      await this.run(action, userId, word)
     }
   }
 
   private async process(job: Job<FavoriteJob>): Promise<void> {
+    const { action, userId, word } = job.data
     try {
-      await this.favorites.add(job.data.userId, job.data.word)
+      await this.run(action, userId, word)
     } catch (error) {
       if (isForeignKeyViolation(error)) {
-        this.logger.warn(`Favorito ignorado: usuario ${job.data.userId} nao existe mais`)
+        this.logger.warn(`Favorito ignorado: usuario ${userId} nao existe mais`)
         return
       }
       throw error
     }
+  }
+
+  private run(action: FavoriteAction, userId: string, word: string): Promise<void> {
+    return action === "add"
+      ? this.favorites.add(userId, word)
+      : this.favorites.remove(userId, word)
   }
 
   async onModuleDestroy(): Promise<void> {

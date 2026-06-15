@@ -18,21 +18,24 @@ export default function HistoryList() {
   }, [])
 
   if (loading) {
-    return <p className="muted">Carregando histórico...</p>
+    return <p className="text-muted">Carregando histórico...</p>
   }
 
   if (items.length === 0) {
-    return <p className="muted">Nenhuma palavra pesquisada ainda.</p>
+    return <p className="text-muted">Nenhuma palavra pesquisada ainda.</p>
   }
 
   return (
-    <ul className="list">
+    <ul className="list-none p-0 mt-3 flex flex-col gap-2">
       {items.map((item, index) => (
-        <li key={`${item.word}-${index}`} className="list-item">
-          <Link className="list-word" href={`/words/${encodeURIComponent(item.word)}`}>
+        <li
+          key={`${item.word}-${index}`}
+          className="flex items-center justify-between gap-3 bg-surface border border-border rounded-[10px] px-4 py-3"
+        >
+          <Link className="font-semibold capitalize" href={`/words/${encodeURIComponent(item.word)}`}>
             {item.word}
           </Link>
-          <span className="muted">{formatDate(item.added)}</span>
+          <span className="text-muted">{formatDate(item.added)}</span>
         </li>
       ))}
     </ul>

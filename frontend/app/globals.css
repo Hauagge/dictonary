@@ -274,6 +274,37 @@ a {
   color: var(--primary);
 }
 
+.alpha-index {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 16px;
+}
+
+.alpha-letter {
+  min-width: 34px;
+  padding: 6px 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.alpha-letter:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.alpha-letter--active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
 .word-grid {
   list-style: none;
   padding: 0;

@@ -1,36 +1,19 @@
 import { Injectable } from "@nestjs/common"
+import { Paginated, paginateQuery } from "../common/pagination"
 import { EntriesQueryDto } from "./dto/entries-query.dto"
 import { EntriesRepository } from "./repositories/entries.repository"
 
-export interface PaginatedWords {
-  results: string[]
-  totalDocs: number
-  page: number
-  totalPages: number
-  hasNext: boolean
-  hasPrev: boolean
-}
+export type PaginatedWords = Paginated<string>
 
 @Injectable()
 export class EntriesService {
   constructor(private readonly repo: EntriesRepository) {}
 
-  async list({ search, page, limit }: EntriesQueryDto): Promise<PaginatedWords> {
-    const [rows, totalDocs] = await this.repo.findBySearch(
-      search,
-      (page - 1) * limit,
-      limit,
+  list({ search, page, limit }: EntriesQueryDto): Promise<PaginatedWords> {
+    return paginateQuery(
+      { page, limit },
+      (skip, take) => this.repo.findBySearch(search, skip, take),
+      (row) => row.word,
     )
-
-    const totalPages = Math.max(1, Math.ceil(totalDocs / limit))
-
-    return {
-      results: rows.map((row) => row.word),
-      totalDocs,
-      page,
-      totalPages,
-      hasNext: page < totalPages,
-      hasPrev: page > 1,
-    }
   }
 }

@@ -7,6 +7,20 @@ export interface Paginated<T> {
   hasPrev: boolean
 }
 
+interface PageParams {
+  page: number
+  limit: number
+}
+
+
+type PageFetcher<R> = (skip: number, take: number) => Promise<[R[], number]>
+
+
+export function offsetOf({ page, limit }: PageParams): number {
+  return (page - 1) * limit
+}
+
+
 export function paginate<T>(
   results: T[],
   totalDocs: number,
@@ -22,4 +36,14 @@ export function paginate<T>(
     hasNext: page < totalPages,
     hasPrev: page > 1,
   }
+}
+
+export async function paginateQuery<R, T>(
+  params: PageParams,
+  fetcher: PageFetcher<R>,
+  map: (row: R) => T,
+): Promise<Paginated<T>> {
+  const { page, limit } = params
+  const [rows, totalDocs] = await fetcher(offsetOf(params), limit)
+  return paginate(rows.map(map), totalDocs, page, limit)
 }

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common"
 import { PaginationQueryDto } from "../common/dto/pagination-query.dto"
-import { paginate, Paginated } from "../common/pagination"
+import { Paginated, paginateQuery } from "../common/pagination"
 import { HistoryEntity } from "./entities/history.entity"
 import { HistoryRepository } from "./repositories/history.repository"
 
@@ -17,19 +17,14 @@ export class HistoryService {
     return this.repo.create(userId, word)
   }
 
-  async list(
+  list(
     userId: string,
     { page, limit }: PaginationQueryDto,
   ): Promise<Paginated<HistoryItem>> {
-    const [rows, totalDocs] = await this.repo.findPage(
-      userId,
-      (page - 1) * limit,
-      limit,
+    return paginateQuery(
+      { page, limit },
+      (skip, take) => this.repo.findPage(userId, skip, take),
+      (row) => ({ word: row.word, added: row.createdAt.toISOString() }),
     )
-    const results = rows.map((row) => ({
-      word: row.word,
-      added: row.createdAt.toISOString(),
-    }))
-    return paginate(results, totalDocs, page, limit)
   }
 }

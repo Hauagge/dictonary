@@ -1,0 +1,57 @@
+
+
+databases:
+  - name: dictionary-db
+    plan: free
+    databaseName: dictionary
+    user: dictionary
+
+services:
+
+  - type: keyvalue
+    name: dictionary-redis
+    plan: free
+    ipAllowList: [] # vazio = aceita apenas conexoes internas do Render
+    maxmemoryPolicy: noeviction
+
+ 
+  - type: web
+    name: dictionary-api
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: yarn install --frozen-lockfile && yarn build
+    startCommand: yarn migration:run:prod && yarn start:prod
+    healthCheckPath: /docs
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+
+      - key: DATABASE_URL
+        fromDatabase:
+          name: dictionary-db
+          property: connectionString
+
+
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: dictionary-redis
+          property: connectionString
+
+
+      - key: DB_SYNCHRONIZE
+        value: "false"
+
+
+      - key: JWT_SECRET
+        generateValue: true
+
+      - key: JWT_EXPIRES_IN
+        value: 7d
+
+
+      - key: FRONTEND_URL
+        sync: false

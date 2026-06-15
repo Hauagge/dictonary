@@ -44,7 +44,7 @@ export default function FavoritesList() {
       {items.map((item) => (
         <li
           key={item.word}
-          className="flex items-center justify-between gap-3 bg-surface border border-border rounded-[10px] px-4 py-3"
+          className="flex flex-wrap items-center justify-between gap-3 bg-surface border border-border rounded-[10px] px-4 py-3"
         >
           <Link className="font-semibold capitalize" href={`/words/${encodeURIComponent(item.word)}`}>
             {item.word}

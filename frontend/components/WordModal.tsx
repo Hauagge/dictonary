@@ -66,12 +66,12 @@ export default function WordModal({ word, onClose }: { word: string; onClose: ()
         aria-modal="true"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="flex items-start justify-between gap-3 px-5 py-[18px] border-b border-border">
+        <div className="flex flex-wrap items-start justify-between gap-3 px-5 py-[18px] border-b border-border">
           <div>
             <h2 className="m-0 capitalize">{word}</h2>
             {phonetic && <span className="text-muted">{phonetic}</span>}
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {audio && (
               <button
                 className={GHOST_BTN}

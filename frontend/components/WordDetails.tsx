@@ -7,6 +7,9 @@ import { getAudio, getPhonetic } from "@/lib/dictionary"
 import type { DictionaryEntry, FavoriteItem, Paginated } from "@/lib/types"
 import WordMeanings from "./WordMeanings"
 
+const GHOST_BTN =
+  "w-auto px-3.5 py-2 rounded-[10px] border border-border bg-transparent text-text text-base font-semibold cursor-pointer enabled:hover:bg-primary-hover disabled:opacity-60 disabled:cursor-not-allowed"
+
 export default function WordDetails({ word }: { word: string }) {
   const [entries, setEntries] = useState<DictionaryEntry[] | null>(null)
   const [loading, setLoading] = useState(true)
@@ -46,28 +49,28 @@ export default function WordDetails({ word }: { word: string }) {
   const audio = entries ? getAudio(entries) : null
 
   return (
-    <main className="shell">
-      <header className="topbar">
-        <Link className="brand" href="/">
+    <main className="max-w-[820px] mx-auto px-4 pb-12">
+      <header className="flex items-center justify-between py-[18px] border-b border-border">
+        <Link className="font-bold text-[1.15rem]" href="/">
           ← Voltar
         </Link>
       </header>
 
-      <section className="content">
-        {loading && <p className="muted">Carregando...</p>}
-        {error && !loading && <p className="error">{error}</p>}
+      <section className="py-10">
+        {loading && <p className="text-muted">Carregando...</p>}
+        {error && !loading && <p className="text-danger text-[0.9rem] m-0">{error}</p>}
 
         {entries && !loading && (
           <>
-            <div className="word-head">
+            <div className="flex items-start justify-between gap-4 mb-5">
               <div>
-                <h1 className="word-title">{word}</h1>
-                {phonetic && <span className="muted">{phonetic}</span>}
+                <h1 className="m-0 capitalize">{word}</h1>
+                {phonetic && <span className="text-muted">{phonetic}</span>}
               </div>
-              <div className="word-actions">
+              <div className="flex gap-2">
                 {audio && (
                   <button
-                    className="btn btn--ghost"
+                    className={GHOST_BTN}
                     onClick={() => {
                       void new Audio(audio).play().catch(() => {})
                     }}
@@ -75,7 +78,7 @@ export default function WordDetails({ word }: { word: string }) {
                     🔊
                   </button>
                 )}
-                <button className="btn btn--ghost" onClick={toggleFavorite}>
+                <button className={GHOST_BTN} onClick={toggleFavorite}>
                   {favorite ? "❤️ Favorito" : "🤍 Favoritar"}
                 </button>
               </div>

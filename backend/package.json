@@ -9,6 +9,12 @@
     "dev": "nest start --watch",
     "start:prod": "node dist/main.js",
     "words:import": "ts-node src/scripts/import-words.ts",
+    "typeorm": "typeorm-ts-node-commonjs -d src/config/data-source.ts",
+    "migration:generate": "yarn typeorm migration:generate",
+    "migration:create": "typeorm-ts-node-commonjs migration:create",
+    "migration:run": "yarn typeorm migration:run",
+    "migration:revert": "yarn typeorm migration:revert",
+    "migration:run:prod": "typeorm -d dist/config/data-source.js migration:run",
     "test": "jest",
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },

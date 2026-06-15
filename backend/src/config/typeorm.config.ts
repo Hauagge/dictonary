@@ -1,3 +1,4 @@
+import { join } from "path"
 import { TypeOrmModuleOptions } from "@nestjs/typeorm"
 import { FavoriteEntity } from "../favorites/entities/favorite.entity"
 import { HistoryEntity } from "../history/entities/history.entity"
@@ -11,12 +12,15 @@ export function buildTypeOrmOptions(): TypeOrmModuleOptions {
       : process.env.NODE_ENV !== "production"
 
   const entities = [UserEntity, WordEntity, HistoryEntity, FavoriteEntity]
+  // Resolve em .ts (ts-node/CLI) e em .js (dist em producao).
+  const migrations = [join(__dirname, "..", "migrations", "*{.ts,.js}")]
 
   if (process.env.DATABASE_URL) {
     return {
       type: "postgres",
       url: process.env.DATABASE_URL,
       entities,
+      migrations,
       synchronize,
     }
   }
@@ -29,6 +33,7 @@ export function buildTypeOrmOptions(): TypeOrmModuleOptions {
     password: process.env.DB_PASS,
     database: process.env.DB_NAME,
     entities,
+    migrations,
     synchronize,
   }
 }
